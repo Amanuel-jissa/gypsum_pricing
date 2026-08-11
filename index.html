@@ -1,1 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
 
+  <meta
+    name="description"
+    content="Mobile gypsum and transportation pricing calculator."
+  />
+
+  <meta name="theme-color" content="#17324d" />
+
+  <title>Gypsum Pricing Calculator</title>
+
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --text: #17202a;
+      --muted: #65727e;
+      --primary: #17324d;
+      --primary-dark: #102638;
+      --border: #dbe2e8;
+      --success-bg: #eef8f1;
+      --success: #176b38;
+      --danger: #b42318;
+      --shadow: 0 10px 30px rgba(23, 50, 77, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+    }
+
+    .app {
+      width: min(100%, 560px);
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    .header {
+      margin-bottom: 18px;
+    }
+
+    .header h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+      line-height: 1.15;
+    }
+
+    .header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 14px;
+    }
+
+    .card h2 {
+      margin: 0 0 16px;
+      font-size: 19px;
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .hint {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    input {
+      width: 100%;
+      min-height: 50px;
+      padding: 12px 14px;
+      border: 1px solid #cbd5dc;
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      font-size: 17px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(23, 50, 77, 0.12);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      min-height: 50px;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .primary:active {
+      background: var(--primary-dark);
+    }
+
+    .secondary {
+      background: #edf1f4;
+      color: var(--text);
+    }
+
+    .error {
+      display: none;
+      margin-top: 12px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      background: #fff0ee;
+      color: var(--danger);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .result {
+      display: none;
+    }
+
+    .result-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .result-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid #edf0f2;
+    }
+
+    .result-row:last-child {
+      border-bottom: 0;
+    }
+
+    .result-label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .result-value {
+      text-align: right;
+      font-size: 17px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .highlight {
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 14px;
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .highlight .big {
+      margin-top: 4px;
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .copy-button {
+      width: 100%;
+      margin-top: 12px;
+      background: #edf1f4;
+      color: var(--text);
+    }
+
+    .formula {
+      padding: 14px;
+      overflow-x: auto;
+      border-radius: 12px;
+      background: #f7f9fa;
+      font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .footer {
+      padding: 4px 4px 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    @media (min-width: 600px) {
+      .app {
+        padding-top: 36px;
+      }
+
+      .card {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+
+    <!-- HEADER -->
+    <header class="header">
+      <h1>Gypsum Pricing Calculator</h1>
+
+      <p>
+        Calculate the transportation price needed to achieve your target
+        profit margin on the total factory selling price.
+      </p>
+    </header>
+
+
+    <!-- INPUTS -->
+    <section class="card">
+
+      <h2>Pricing Inputs</h2>
+
+      <div class="field">
+        <label for="gypsumPrice">
+          Gypsum price charged to factory (ETB/qtl)
+        </label>
+
+        <input
+          id="gypsumPrice"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="0.01"
+          value="220"
+        />
+      </div>
+
+
+      <div class="field">
+        <label for="transportCost">
+          Transportation cost you pay (ETB/qtl)
+        </label>
+
+        <input
+          id="transportCost"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="0.01"
+          value="280"
+        />
+
+        <span class="hint">
+          This is the actual truck rental/transportation cost per quintal.
+        </span>
+      </div>
+
+
+      <div class="field">
+        <label for="profitMargin">
+          Target profit margin on total price (%)
+        </label>
+
+        <input
+          id="profitMargin"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          max="99.99"
+          step="0.01"
+          value="10"
+        />
+      </div>
+
+
+      <div class="field">
+        <label for="quantity">
+          Quantity (optional, quintals)
+        </label>
+
+        <input
+          id="quantity"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          step="0.01"
+          placeholder="e.g. 300"
+        />
+      </div>
+
+
+      <div class="actions">
+
+        <button
+          class="primary"
+          id="calculateBtn"
+          type="button"
+        >
+          Calculate
+        </button>
+
+        <button
+          class="secondary"
+          id="resetBtn"
+          type="button"
+        >
+          Reset
+        </button>
+
+      </div>
+
+
+      <div
+        class="error"
+        id="error"
+      ></div>
+
+    </section>
+
+
+
+    <!-- RESULTS -->
+    <section
+      class="card result"
+      id="resultCard"
+    >
+
+      <h2>Recommended Pricing</h2>
+
+
+      <div class="result-grid">
+
+        <div class="result-row">
+          <span class="result-label">
+            Gypsum price
+          </span>
+
+          <span
+            class="result-value"
+            id="outGypsum"
+          ></span>
+        </div>
+
+
+        <div class="result-row">
+          <span class="result-label">
+            Transportation cost
+          </span>
+
+          <span
+            class="result-value"
+            id="outTransportCost"
+          ></span>
+        </div>
+
+
+        <div class="result-row">
+          <span class="result-label">
+            Transportation price to factory
+          </span>
+
+          <span
+            class="result-value"
+            id="outTransportPrice"
+          ></span>
+        </div>
+
+
+        <div class="result-row">
+          <span class="result-label">
+            Total price to factory
+          </span>
+
+          <span
+            class="result-value"
+            id="outTotalPrice"
+          ></span>
+        </div>
+
+
+        <div class="result-row">
+          <span class="result-label">
+            Profit per quintal
+          </span>
+
+          <span
+            class="result-value"
+            id="outProfit"
+          ></span>
+        </div>
+
+
+        <div class="result-row">
+          <span class="result-label">
+            Actual profit margin
+          </span>
+
+          <span
+            class="result-value"
+            id="outMargin"
+          ></span>
+        </div>
+
+
+        <div class="result-row">
+          <span class="result-label">
+            Transportation markup
+          </span>
+
+          <span
+            class="result-value"
+            id="outMarkup"
+          ></span>
+        </div>
+
+      </div>
+
+
+      <!-- OPTIONAL TOTAL ORDER -->
+      <div
+        class="highlight"
+        id="quantityBox"
+        style="display:none;"
+      >
+
+        <div>
+          Total invoice for entered quantity
+        </div>
+
+        <div
+          class="big"
+          id="outOrderTotal"
+        ></div>
+
+      </div>
+
+
+      <!-- COPY QUOTATION -->
+      <button
+        class="copy-button"
+        id="copyBtn"
+        type="button"
+      >
+        Copy quotation
+      </button>
+
+    </section>
+
+
+
+    <!-- FORMULA -->
+    <section class="card">
+
+      <h2>Formula</h2>
+
+      <div class="formula">
+
+        Transportation Price =
+        (Transportation Cost +
+        (Target Margin × Gypsum Price))
+        ÷
+        (1 − Target Margin)
+
+      </div>
+
+      <p class="note">
+
+        Example: a 10% target margin is entered as 10
+        in the calculator and converted internally to 0.10.
+
+      </p>
+
+    </section>
+
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+
+      This calculator performs all calculations in your browser.
+      No account or server is required.
+
+    </footer>
+
+  </main>
+
+
+
+  <script>
+
+    /*
+      ============================================================
+      GYPSUM PRICING CALCULATOR
+      ============================================================
+
+      Core equation:
+
+          P = (T + XG) / (1 - X)
+
+      Where:
+
+          G = gypsum price charged to factory
+          T = actual transportation cost paid
+          X = desired profit margin as a decimal
+          P = transportation price charged to factory
+
+      Total selling price:
+
+          Total = G + P
+
+      Profit:
+
+          Profit = P - T
+
+      Profit margin:
+
+          Profit Margin = Profit / Total Selling Price
+      ============================================================
+    */
+
+
+    // ------------------------------------------------------------
+    // INPUT ELEMENTS
+    // ------------------------------------------------------------
+
+    const gypsumInput =
+      document.getElementById("gypsumPrice");
+
+    const transportCostInput =
+      document.getElementById("transportCost");
+
+    const marginInput =
+      document.getElementById("profitMargin");
+
+    const quantityInput =
+      document.getElementById("quantity");
+
+
+    // ------------------------------------------------------------
+    // RESULT ELEMENTS
+    // ------------------------------------------------------------
+
+    const resultCard =
+      document.getElementById("resultCard");
+
+    const errorBox =
+      document.getElementById("error");
+
+    const outGypsum =
+      document.getElementById("outGypsum");
+
+    const outTransportCost =
+      document.getElementById("outTransportCost");
+
+    const outTransportPrice =
+      document.getElementById("outTransportPrice");
+
+    const outTotalPrice =
+      document.getElementById("outTotalPrice");
+
+    const outProfit =
+      document.getElementById("outProfit");
+
+    const outMargin =
+      document.getElementById("outMargin");
+
+    const outMarkup =
+      document.getElementById("outMarkup");
+
+    const quantityBox =
+      document.getElementById("quantityBox");
+
+    const outOrderTotal =
+      document.getElementById("outOrderTotal");
+
+
+    // ------------------------------------------------------------
+    // NUMBER FORMATTER
+    // ------------------------------------------------------------
+
+    const formatter =
+      new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+
+    function etb(value) {
+
+      return `${formatter.format(value)} ETB`;
+
+    }
+
+
+    // ------------------------------------------------------------
+    // MAIN CALCULATION
+    // ------------------------------------------------------------
+
+    function calculate() {
+
+      errorBox.style.display = "none";
+
+
+      // Get input values
+
+      const G =
+        Number(gypsumInput.value);
+
+      const T =
+        Number(transportCostInput.value);
+
+      const Xpercent =
+        Number(marginInput.value);
+
+      const Q =
+        quantityInput.value === ""
+          ? null
+          : Number(quantityInput.value);
+
+
+      // Convert percentage to decimal
+
+      const X =
+        Xpercent / 100;
+
+
+      // ----------------------------------------------------------
+      // VALIDATION
+      // ----------------------------------------------------------
+
+      if (!Number.isFinite(G) || G < 0) {
+
+        return showError(
+          "Enter a valid gypsum price."
+        );
+
+      }
+
+
+      if (!Number.isFinite(T) || T < 0) {
+
+        return showError(
+          "Enter a valid transportation cost."
+        );
+
+      }
+
+
+      if (
+        !Number.isFinite(Xpercent) ||
+        Xpercent < 0 ||
+        Xpercent >= 100
+      ) {
+
+        return showError(
+          "Target profit margin must be from 0% to less than 100%."
+        );
+
+      }
+
+
+      if (
+        Q !== null &&
+        (!Number.isFinite(Q) || Q < 0)
+      ) {
+
+        return showError(
+          "Enter a valid quantity or leave it blank."
+        );
+
+      }
+
+
+      // ----------------------------------------------------------
+      // CORE EQUATION
+      // ----------------------------------------------------------
+
+      /*
+          P = (T + XG) / (1 - X)
+      */
+
+      const P =
+        (T + X * G) /
+        (1 - X);
+
+
+      // ----------------------------------------------------------
+      // OTHER CALCULATIONS
+      // ----------------------------------------------------------
+
+      const totalPrice =
+        G + P;
+
+
+      const profit =
+        P - T;
+
+
+      const actualMargin =
+        totalPrice === 0
+          ? 0
+          : (profit / totalPrice) * 100;
+
+
+      const transportMarkup =
+        T === 0
+          ? null
+          : (profit / T) * 100;
+
+
+      // ----------------------------------------------------------
+      // DISPLAY RESULTS
+      // ----------------------------------------------------------
+
+      outGypsum.textContent =
+        etb(G) + " / qtl";
+
+
+      outTransportCost.textContent =
+        etb(T) + " / qtl";
+
+
+      outTransportPrice.textContent =
+        etb(P) + " / qtl";
+
+
+      outTotalPrice.textContent =
+        etb(totalPrice) + " / qtl";
+
+
+      outProfit.textContent =
+        etb(profit) + " / qtl";
+
+
+      outMargin.textContent =
+        `${actualMargin.toFixed(2)}%`;
+
+
+      outMarkup.textContent =
+        transportMarkup === null
+          ? "N/A"
+          : `${transportMarkup.toFixed(2)}%`;
+
+
+      // ----------------------------------------------------------
+      // OPTIONAL QUANTITY CALCULATION
+      // ----------------------------------------------------------
+
+      if (Q !== null && Q > 0) {
+
+        quantityBox.style.display =
+          "block";
+
+        outOrderTotal.textContent =
+          etb(totalPrice * Q);
+
+      }
+
+      else {
+
+        quantityBox.style.display =
+          "none";
+
+      }
+
+
+      // Show results
+
+      resultCard.style.display =
+        "block";
+
+
+      // Save inputs locally
+
+      saveInputs();
+
+
+      // Scroll to results
+
+      resultCard.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+    }
+
+
+
+    // ------------------------------------------------------------
+    // ERROR MESSAGE
+    // ------------------------------------------------------------
+
+    function showError(message) {
+
+      errorBox.textContent =
+        message;
+
+      errorBox.style.display =
+        "block";
+
+      resultCard.style.display =
+        "none";
+
+    }
+
+
+
+    // ------------------------------------------------------------
+    // RESET
+    // ------------------------------------------------------------
+
+    function reset() {
+
+      gypsumInput.value =
+        "220";
+
+      transportCostInput.value =
+        "280";
+
+      marginInput.value =
+        "10";
+
+      quantityInput.value =
+        "";
+
+
+      resultCard.style.display =
+        "none";
+
+      errorBox.style.display =
+        "none";
+
+
+      localStorage.removeItem(
+        "gypsumPricingInputs"
+      );
+
+    }
+
+
+
+    // ------------------------------------------------------------
+    // SAVE INPUTS
+    // ------------------------------------------------------------
+
+    function saveInputs() {
+
+      localStorage.setItem(
+        "gypsumPricingInputs",
+
+        JSON.stringify({
+
+          gypsum:
+            gypsumInput.value,
+
+          transport:
+            transportCostInput.value,
+
+          margin:
+            marginInput.value,
+
+          quantity:
+            quantityInput.value
+
+        })
+      );
+
+    }
+
+
+
+    // ------------------------------------------------------------
+    // LOAD PREVIOUS INPUTS
+    // ------------------------------------------------------------
+
+    function loadInputs() {
+
+      const saved =
+        localStorage.getItem(
+          "gypsumPricingInputs"
+        );
+
+
+      if (!saved) {
+        return;
+      }
+
+
+      try {
+
+        const data =
+          JSON.parse(saved);
+
+
+        if (
+          data.gypsum !== undefined
+        ) {
+
+          gypsumInput.value =
+            data.gypsum;
+
+        }
+
+
+        if (
+          data.transport !== undefined
+        ) {
+
+          transportCostInput.value =
+            data.transport;
+
+        }
+
+
+        if (
+          data.margin !== undefined
+        ) {
+
+          marginInput.value =
+            data.margin;
+
+        }
+
+
+        if (
+          data.quantity !== undefined
+        ) {
+
+          quantityInput.value =
+            data.quantity;
+
+        }
+
+      }
+
+      catch (error) {
+
+        localStorage.removeItem(
+          "gypsumPricingInputs"
+        );
+
+      }
+
+    }
+
+
+
+    // ------------------------------------------------------------
+    // COPY QUOTATION
+    // ------------------------------------------------------------
+
+    async function copyQuotation() {
+
+      const text = [
+
+        "Gypsum Pricing Quotation",
+
+        `Gypsum: ${outGypsum.textContent}`,
+
+        `Transportation: ${outTransportPrice.textContent}`,
+
+        `Total: ${outTotalPrice.textContent}`,
+
+        `Profit margin: ${outMargin.textContent}`,
+
+        `Profit: ${outProfit.textContent}`
+
+      ];
+
+
+      if (quantityInput.value) {
+
+        text.push(
+          `Quantity: ${quantityInput.value} qtl`
+        );
+
+        text.push(
+          `Total invoice: ${outOrderTotal.textContent}`
+        );
+
+      }
+
+
+      try {
+
+        await navigator.clipboard.writeText(
+          text.join("\n")
+        );
+
+
+        const button =
+          document.getElementById(
+            "copyBtn"
+          );
+
+
+        const original =
+          button.textContent;
+
+
+        button.textContent =
+          "Copied!";
+
+
+        setTimeout(() => {
+
+          button.textContent =
+            original;
+
+        }, 1400);
+
+      }
+
+      catch (error) {
+
+        alert(
+          "Copy is not available in this browser. You can copy the results manually."
+        );
+
+      }
+
+    }
+
+
+
+    // ------------------------------------------------------------
+    // BUTTON EVENTS
+    // ------------------------------------------------------------
+
+    document
+      .getElementById("calculateBtn")
+      .addEventListener(
+        "click",
+        calculate
+      );
+
+
+    document
+      .getElementById("resetBtn")
+      .addEventListener(
+        "click",
+        reset
+      );
+
+
+    document
+      .getElementById("copyBtn")
+      .addEventListener(
+        "click",
+        copyQuotation
+      );
+
+
+
+    // ------------------------------------------------------------
+    // ENTER KEY
+    // ------------------------------------------------------------
+
+    [
+      gypsumInput,
+      transportCostInput,
+      marginInput,
+      quantityInput
+    ].forEach(input => {
+
+      input.addEventListener(
+        "keydown",
+        event => {
+
+          if (event.key === "Enter") {
+
+            calculate();
+
+          }
+
+        }
+      );
+
+    });
+
+
+
+    // ------------------------------------------------------------
+    // START APPLICATION
+    // ------------------------------------------------------------
+
+    loadInputs();
+
+    calculate();
+
+  </script>
+
+</body>
+</html>
